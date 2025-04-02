@@ -3,7 +3,7 @@
 #include "rcl.h"
 
 void __ISR_getPPM();
-volatile uint32_t __ISR_channel[6];
+volatile uint32_t __ISR_channel[10];  // Changed from 6 to 10 channels
 volatile bool __ISR_rcl_updated = false;
 
 class RclGizmoPpm : public RclGizmo {
@@ -22,7 +22,7 @@ class RclGizmoPpm : public RclGizmo {
     }
 
     bool update() {
-      for(int i=0;i<6;i++) pwm[i] = __ISR_channel[i];
+      for(int i=0; i<10; i++) pwm[i] = __ISR_channel[i];  // Changed from 6 to 10 channels
       bool rv = __ISR_rcl_updated;
       __ISR_rcl_updated = false;
       return rv;
@@ -41,11 +41,11 @@ void __ISR_getPPM() {
     ppm_counter = 0;
   }
 
-  if (ppm_counter >= 1 && ppm_counter <= 6) { //First-Sixth pulse
+  if (ppm_counter >= 1 && ppm_counter <= 10) { //First-Tenth pulse (changed from 6 to 10)
     __ISR_channel[ppm_counter-1] = dt_ppm;
   }
 
-  if (ppm_counter == 6) { //Sixth pulse
+  if (ppm_counter == 10) { //Tenth pulse (changed from 6 to 10)
     __ISR_rcl_updated = true;
   }
   
